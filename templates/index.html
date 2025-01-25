@@ -4,39 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QR Code Scanner</title>
-    <!-- 引入 html5-qrcode 的庫 -->
+    <!-- Include the Html5Qrcode library -->
     <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
-    <style>
-        #reader {
-            width: 600px;
-            margin: 20px auto;
-        }
-    </style>
 </head>
 <body>
-    <h1>QR Code Scanner Example</h1>
-    <!-- 掃描器的容器 -->
-    <div id="reader"></div>
+    <h1>QR Code Scanner</h1>
+    <div id="reader" style="width: 300px; margin: 20px auto;"></div>
+    <p>Scanned Code: <span id="scanned-result">None</span></p>
 
-    <!-- JavaScript 程式碼 -->
     <script>
-        function onScanSuccess(decodedText, decodedResult) {
-            // 處理掃描成功的結果
-            console.log(`Code matched = ${decodedText}`, decodedResult);
+        function onScanSuccess(decodedText) {
+            // Display the scanned result
+            document.getElementById('scanned-result').textContent = decodedText;
+            console.log(`Scanned Code: ${decodedText}`);
         }
 
-        function onScanFailure(error) {
-            // 處理掃描失敗的情況，通常可以忽略
-            console.warn(`Code scan error = ${error}`);
-        }
-
-        // 創建掃描器實例
         let html5QrcodeScanner = new Html5QrcodeScanner(
-            "reader", // 將掃描器綁定到 <div id="reader">
-            { fps: 10, qrbox: { width: 250, height: 250 } }, // 掃描器參數
-            false // 不啟用詳細日誌
+            "reader", 
+            { fps: 10, qrbox: { width: 250, height: 250 } }
         );
-        html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+
+        // Start the scanner
+        html5QrcodeScanner.render(onScanSuccess);
     </script>
 </body>
 </html>
