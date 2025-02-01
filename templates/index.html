@@ -1,31 +1,41 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QR Code Scanner</title>
-    <!-- Include the Html5Qrcode library -->
-    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
+    <title>QR 掃描器</title>
+    <script src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
 </head>
 <body>
-    <h1>QR Code Scanner</h1>
-    <div id="reader" style="width: 300px; margin: 20px auto;"></div>
-    <p>Scanned Code: <span id="scanned-result">None</span></p>
+    <h1>掃描 QR 碼</h1>
+    <video id="preview" width="300"></video>
+
+    <form id="qrForm" action="/scan" method="POST">
+        <input type="hidden" name="qr_data" id="qr_data">
+        <button type="submit" id="submitBtn" disabled>提交</button>
+    </form>
 
     <script>
-        function onScanSuccess(decodedText) {
-            // Display the scanned result
-            document.getElementById('scanned-result').textContent = decodedText;
-            console.log(`Scanned Code: ${decodedText}`);
-        }
+        let scanner = new Instascan.Scanner({ video: document.getElementById('preview') });
 
-        let html5QrcodeScanner = new Html5QrcodeScanner(
-            "reader", 
-            { fps: 10, qrbox: { width: 250, height: 250 } }
-        );
+        scanner.addListener('scan', function (content) {
+            document.getElementById('qr_data').value = content;
+            document.getElementById('submitBtn').disabled = false;
+        });
 
-        // Start the scanner
-        html5QrcodeScanner.render(onScanSuccess);
+        Instascan.Camera.getCameras().then(function (cameras) {
+            let backCamera = cameras.find(camera => camera.name.toLowerCase().includes('back'));
+
+            if (backCamera) {
+                scanner.start(backCamera);
+            } else if (cameras.length > 0) {
+                scanner.start(cameras[0]); // 如果找不到後鏡頭，則使用第一個可用攝像頭
+            } else {
+                alert("沒有可用的攝影機！");
+            }
+        }).catch(function (e) {
+            console.error(e);
+        });
     </script>
 </body>
 </html>
