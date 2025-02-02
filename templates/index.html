@@ -28,8 +28,11 @@
 
             if (backCamera) {
                 scanner.start(backCamera);
+                
             } else if (cameras.length > 0) {
-                scanner.start(cameras[0]); // 如果找不到後鏡頭，則使用第一個可用攝像頭
+                
+                scanner.start(cameras[1]); // 如果找不到後鏡頭，則使用第一個可用攝像頭
+                
             } else {
                 alert("沒有可用的攝影機！");
             }
